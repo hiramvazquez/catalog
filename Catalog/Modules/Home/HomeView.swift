@@ -16,12 +16,31 @@ struct HomeView: View {
     
     var body: some View {
         Background {
-            Color.blue.ignoresSafeArea()
+            switch viewModel.state {
+            case .loading:
+                AppLoadingView()
+            case .error(_):
+                EmptyView()
+            case .loaded:
+                catalogList
+            }
+        }
+    }
+    
+    private var catalogList: some View {
+        List {
+            Text("Item 1")
+            Text("Item 2")
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Catálogo")
+            }
         }
     }
 }
 
 #Preview {
-    let coordinator = Coordinator<AppRoutePath>(initialRoot: .splash)
+    let coordinator = Coordinator<AppRoutePath>(initialRoot: .home)
     AppRoutePath.appView(coordinator: coordinator)
 }
