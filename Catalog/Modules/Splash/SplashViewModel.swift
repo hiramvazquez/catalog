@@ -8,5 +8,20 @@
 import Foundation
 
 final class SplashViewModel: BaseViewModel {
+    enum Action {
+        case navigateToHome
+    }
     
+    func hanleAction(_ action: Action) {
+        switch action {
+        case .navigateToHome:
+            navigateToHomeAction()
+        }
+    }
+}
+
+extension SplashViewModel {
+    private func navigateToHomeAction() {
+        route.setRoot(root: .home)
+    }
 }

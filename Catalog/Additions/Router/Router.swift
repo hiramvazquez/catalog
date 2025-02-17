@@ -12,12 +12,15 @@ typealias Hash = Hashable & Identifiable
 
 enum AppRoutePath: Hash {
     case splash
+    case home
     
     static func appView(coordinator: Coordinator<AppRoutePath>) -> some View {
         RouterView(coordinator: coordinator) { route in
             switch route {
             case .splash:
-                return SplashView(coordinator: coordinator)
+                AnyView(SplashView(coordinator: coordinator))
+            case .home:
+                AnyView(HomeView(coordinator: coordinator))
             }
         }
     }

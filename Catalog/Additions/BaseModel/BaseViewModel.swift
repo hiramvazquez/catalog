@@ -15,7 +15,7 @@ protocol BaseViewModelProtocol {
 
 class BaseViewModel: ObservableObject, BaseViewModelProtocol {
     @Inject var appService: AppManagerService
-    @ObservedObject var coordinator: Coordinator<AppRoutePath>    
+    @ObservedObject var route: Coordinator<AppRoutePath>
     @Published var state: ViewState = .loaded
     
     enum ViewState {
@@ -26,7 +26,7 @@ class BaseViewModel: ObservableObject, BaseViewModelProtocol {
     
     var cancellables = Set<AnyCancellable>()
     init(coordinator: Coordinator<AppRoutePath>) {
-        self.coordinator = coordinator
+        self.route = coordinator
     }
 }
 

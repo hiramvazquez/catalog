@@ -18,6 +18,11 @@ struct SplashView: View {
         Background {
             Color.red.ignoresSafeArea()
         }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                viewModel.hanleAction(.navigateToHome)
+            }
+        }
     }
 }
 

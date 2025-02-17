@@ -61,7 +61,11 @@ final class Coordinator<T: Hashable>: ObservableObject {
         self.navigationState = .main
     }
     
-    // Métodos para navegación principal
+    func setRoot(root: T) {
+        self.navigationMain = (root: root, paths: [])
+        self.navigationState = .main
+    }
+    
     func push(_ path: T) {
         switch navigationState {
         case .main:
@@ -104,7 +108,6 @@ final class Coordinator<T: Hashable>: ObservableObject {
         }
     }
 
-    // Métodos para manejar el modal
     func presentModal(_ root: T) {
         navigationModal = (root: root, paths: [])
         navigationState = .modal
