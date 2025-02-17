@@ -15,7 +15,7 @@ class DependenciesAssembler {
     static let shared = DependenciesAssembler()
     
     private let modules: [DependencyModule] = [
-
+        NetWorkingModule()
     ]
     
     func register() {
