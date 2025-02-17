@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct CatalogApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    let coordinator = Coordinator<AppRoutePath>(initialRoot: .splash)
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                AppRoutePath.appView(coordinator: coordinator)
+            }
         }
     }
 }

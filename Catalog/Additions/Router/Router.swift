@@ -17,7 +17,7 @@ enum AppRoutePath: Hash {
         RouterView(coordinator: coordinator) { route in
             switch route {
             case .splash:
-                return EmptyView()
+                return SplashView(coordinator: coordinator)
             }
         }
     }
