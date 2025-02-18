@@ -8,17 +8,18 @@
 import Foundation
 
 final class HomeViewModel: BaseViewModel {
+    @Inject private var localService: AppLocalManagerService
     @Published var gameList: [Game] = []
     
     enum Action {
-        case getCatalog
+        case getCatalogAndSave
         case onSelectGame(Game)
     }
     
     func handle(_ action: Action) {
         switch action {
-        case .getCatalog:
-            getCatalogAction()
+        case .getCatalogAndSave:
+            getCatalogAndSaveAction()
         case .onSelectGame(let game):
             navigateToGameDetail(game: game)
         }
@@ -27,7 +28,7 @@ final class HomeViewModel: BaseViewModel {
     override init(coordinator: Coordinator<AppRoutePath>) {
         super.init(coordinator: coordinator)
         state = .loading
-        handle(.getCatalog)
+        handle(.getCatalogAndSave)
     }
     
     override func onErrorAction() {
@@ -36,15 +37,27 @@ final class HomeViewModel: BaseViewModel {
 }
 
 extension HomeViewModel {
-    private func getCatalogAction() {
+    private func getCatalogAndSaveAction() {
         let request = AppRequest(request: GameListRequest())
         execute(request: request) { [weak self] gameList in
-            self?.gameList = gameList
-            self?.state = .loaded
+            Task {
+                try await storeGameReturned(games: gameList)
+                self?.gameList = gameList
+                self?.state = .loaded
+            }
+        }
+        
+        func storeGameReturned(games: [Game]) async throws {
+            do {
+                try await localService.storeAllGames(games: games)
+            }
+            catch {
+                throw NSError(domain: "", code: 0, userInfo: nil)
+            }
         }
     }
     
     private func navigateToGameDetail(game: Game) {
         route.push(.detailGame(game))
-    }
+    }    
 }

@@ -6,6 +6,46 @@
 //
 
 import Foundation
+import SwiftData
+
+@Model
+class LocalGame {
+    var id: Int
+    var title: String
+    var thumbnail: String
+    var short_description: String
+    var game_url: String
+    var genre: String
+    var platform: String
+    var publisher: String
+    var developer: String
+    var release_date: String
+    var freetogame_profile_url: String
+    
+    init(id: Int,
+         title: String,
+         thumbnail: String,
+         short_description: String,
+         game_url: String,
+         genre: String,
+         platform: String,
+         publisher: String,
+         developer: String,
+         release_date: String,
+         freetogame_profile_url: String) {
+        self.id = id
+        self.title = title
+        self.thumbnail = thumbnail
+        self.short_description = short_description
+        self.game_url = game_url
+        self.genre = genre
+        self.platform = platform
+        self.publisher = publisher
+        self.developer = developer
+        self.release_date = release_date
+        self.freetogame_profile_url = freetogame_profile_url
+    }
+}
 
 struct Game: Decodable, Hashable {
     var id: Int
@@ -22,6 +62,20 @@ struct Game: Decodable, Hashable {
     
     var imageURL: URL? {
         URL(string: thumbnail)
+    }
+    
+    func toLocalGame() -> LocalGame {
+        LocalGame(id: id,
+                  title: title,
+                  thumbnail: thumbnail,
+                  short_description: short_description,
+                  game_url: game_url,
+                  genre: genre,
+                  platform: platform,
+                  publisher: publisher,
+                  developer: developer,
+                  release_date: release_date,
+                  freetogame_profile_url: freetogame_profile_url)
     }
 }
 

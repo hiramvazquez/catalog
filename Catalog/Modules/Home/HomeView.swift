@@ -32,7 +32,7 @@ struct HomeView: View {
             .padding(.vertical)
         }
         .refreshable {
-            viewModel.handle(.getCatalog)
+            viewModel.handle(.getCatalogAndSave)
         }
         .toolbar {
             ToolbarItem(placement: .navigation) {
