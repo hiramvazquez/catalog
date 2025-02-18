@@ -34,7 +34,7 @@ struct ToolbarItemModifier<T: View>: ViewModifier {
 func imageBack(name: String) -> some View {
     Image(systemName: name)
         .foregroundColor(.primary)
-        .font(.custom("Helvetica-Bold", size: 18))
+        .fontWeight(.black)
 }
 
 enum NavigationState {

@@ -44,8 +44,8 @@ final class NetworkingManager: NSObject, URLSessionDelegate, NetworkingManagerSe
                         throw CustomError.invalidResponse
                     }
                     
-                    print("----------\nCode:\n\(response.statusCode)\n-------------")
-                    self.logs(output: $0, request: request)
+                   // print("----------\nCode:\n\(response.statusCode)\n-------------")
+                   // self.logs(output: $0, request: request)
                     
                     switch response.statusCode {
                     case (200..<300):

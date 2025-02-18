@@ -19,23 +19,33 @@ struct HomeView: View {
             switch viewModel.state {
             case .loading:
                 AppLoadingView()
-            case .error(_):
-                EmptyView()
+            case .error(let error):
+                AppErrorView(error: error)
             case .loaded:
-                catalogList
+                catalogList()
             }
         }
     }
     
-    private var catalogList: some View {
-        List {
-            ForEach(viewModel.gameList, id: \.self) { game in
-                Text(game.title)
+    private func catalogList() -> some View {
+        return ScrollView {
+            LazyVStack(spacing: 20) {
+                ForEach(viewModel.gameList, id: \.self) { game in
+                    GameCellView(game: game, onSelected: {
+                        viewModel.handle(.onSelectGame(game))
+                    })
+                }
             }
+            .padding(.vertical)
+        }
+        .refreshable {
+            viewModel.handle(.getCatalog)
         }
         .toolbar {
-            ToolbarItem(placement: .principal) {
+            ToolbarItem(placement: .navigation) {
                 Text("Catálogo")
+                    .font(.title)
+                    .fontWeight(.black)
             }
         }
     }

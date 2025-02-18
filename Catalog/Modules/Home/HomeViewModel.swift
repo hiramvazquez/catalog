@@ -9,14 +9,18 @@ import Foundation
 
 final class HomeViewModel: BaseViewModel {
     @Published var gameList: [Game] = []
+    
     enum Action {
         case getCatalog
+        case onSelectGame(Game)
     }
     
     func handle(_ action: Action) {
         switch action {
         case .getCatalog:
             getCatalogAction()
+        case .onSelectGame(let game):
+            navigateToGameDetail(game: game)
         }
     }
     
@@ -34,5 +38,9 @@ extension HomeViewModel {
             self?.gameList = gameList
             self?.state = .loaded
         }
+    }
+    
+    private func navigateToGameDetail(game: Game) {
+        route.push(.detailGame(game))
     }
 }

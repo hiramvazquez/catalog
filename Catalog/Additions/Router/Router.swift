@@ -13,6 +13,7 @@ typealias Hash = Hashable & Identifiable
 enum AppRoutePath: Hash {
     case splash
     case home
+    case detailGame(Game)
     
     static func appView(coordinator: Coordinator<AppRoutePath>) -> some View {
         RouterView(coordinator: coordinator) { route in
@@ -21,6 +22,8 @@ enum AppRoutePath: Hash {
                 AnyView(SplashView(coordinator: coordinator))
             case .home:
                 AnyView(HomeView(coordinator: coordinator))
+            case .detailGame(let game):
+                AnyView(DetailGameView(coordinator: coordinator, game: game))
             }
         }
     }
