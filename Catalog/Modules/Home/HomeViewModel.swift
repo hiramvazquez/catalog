@@ -9,11 +9,11 @@ import Foundation
 
 final class HomeViewModel: BaseViewModel {
     @Inject private var localService: AppLocalManagerService
-    @Published var gameList: [Game] = []
+    @Published var gameList: [LocalGame] = []
     
     enum Action {
         case getCatalogAndSave
-        case onSelectGame(Game)
+        case onSelectGame(LocalGame)
     }
     
     func handle(_ action: Action) {
@@ -40,10 +40,15 @@ extension HomeViewModel {
     private func getCatalogAndSaveAction() {
         let request = AppRequest(request: GameListRequest())
         execute(request: request) { [weak self] gameList in
+            guard let self = self else { return }
             Task {
-                try await storeGameReturned(games: gameList)
-                self?.gameList = gameList
-                self?.state = .loaded
+                do {
+                    try await storeGameReturned(games: gameList)
+                    self.gameList = try await self.localService.retrieveAllGames()
+                } catch {
+                    self.gameList = []
+                }
+                self.state = .loaded
             }
         }
         
@@ -52,12 +57,12 @@ extension HomeViewModel {
                 try await localService.storeAllGames(games: games)
             }
             catch {
-                throw NSError(domain: "", code: 0, userInfo: nil)
+                throw error
             }
         }
     }
     
-    private func navigateToGameDetail(game: Game) {
+    private func navigateToGameDetail(game: LocalGame) {
         route.push(.detailGame(game))
     }    
 }

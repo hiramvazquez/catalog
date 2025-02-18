@@ -10,7 +10,7 @@ import Foundation
 class AppPreview {
     static let shared = AppPreview()
     
-    let game: Game = Game(id: 123,
+    let game: LocalGame = LocalGame(id: 123,
                           title: "Tarisland",
                           thumbnail: "https://www.freetogame.com/g/582/thumbnail.jpg",
                           short_description: "A cross-platform MMORPG developed by Level Infinite and Published by Tencent.",

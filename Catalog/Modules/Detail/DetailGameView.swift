@@ -10,7 +10,7 @@ import SwiftUI
 struct DetailGameView: View {
     @StateObject var viewModel: DetailGameViewModel
     
-    init(coordinator: Coordinator<AppRoutePath>, game: Game) {
+    init(coordinator: Coordinator<AppRoutePath>, game: LocalGame) {
         _viewModel = StateObject(wrappedValue: DetailGameViewModel(coordinator: coordinator, game: game))
     }
     

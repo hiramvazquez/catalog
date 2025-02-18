@@ -45,6 +45,10 @@ class LocalGame {
         self.release_date = release_date
         self.freetogame_profile_url = freetogame_profile_url
     }
+    
+    var imageURL: URL? {
+        URL(string: thumbnail)
+    }
 }
 
 struct Game: Decodable, Hashable {
@@ -59,10 +63,6 @@ struct Game: Decodable, Hashable {
     var developer: String
     var release_date: String
     var freetogame_profile_url: String
-    
-    var imageURL: URL? {
-        URL(string: thumbnail)
-    }
     
     func toLocalGame() -> LocalGame {
         LocalGame(id: id,

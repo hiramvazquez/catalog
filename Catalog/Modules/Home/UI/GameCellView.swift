@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GameCellView: View {
-    let game: Game
+    let game: LocalGame
     let onSelected: Action
     
     var body: some View {

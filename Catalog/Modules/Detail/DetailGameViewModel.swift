@@ -8,9 +8,9 @@
 import Foundation
 
 final class DetailGameViewModel: BaseViewModel {
-    @Published var game: Game
+    @Published var game: LocalGame
     
-    init(coordinator: Coordinator<AppRoutePath>, game: Game) {
+    init(coordinator: Coordinator<AppRoutePath>, game: LocalGame) {
         self.game = game
         super.init(coordinator: coordinator)
     }

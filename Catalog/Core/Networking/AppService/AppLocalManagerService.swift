@@ -24,11 +24,12 @@ final class LocalManagerService: AppLocalManagerService {
         }
     }
     
-    func retrieveAllGames() async throws -> [LocalGame] {
+    func retrieveAllGames() async -> [LocalGame] {
+        guard let modelContext else { return [] }
         do {
-            return try modelContext?.fetch(FetchDescriptor<LocalGame>()) ?? []
+            return try modelContext.fetch(FetchDescriptor<LocalGame>())
         } catch {
-            throw NSError(domain: "", code: 0, userInfo: nil)
+            return []
         }
     }
     
@@ -42,24 +43,23 @@ final class LocalManagerService: AppLocalManagerService {
             }
         }
         catch {
-            throw NSError(domain: "", code: 0, userInfo: nil)
+            throw error
         }
         
         func removeBeforeStore() {
             modelContext?.deletedModelsArray.forEach({ $0.modelContext?.delete($0) })
         }
-    }
-    
-    private func storeLocalGame(game: LocalGame) async throws {
-        guard let modelContext = modelContext else {
-            throw NSError(domain: "", code: 0, userInfo: nil)
-        }
-        modelContext.insert(game)
-        do {
-            try modelContext.save()
-            print("Game \(game.title) saved")
-        } catch {
-            throw NSError(domain: "", code: 0, userInfo: nil)
+        
+        func storeLocalGame(game: LocalGame) async throws {
+            guard let modelContext = modelContext else {
+                throw NSError(domain: "", code: 0, userInfo: nil)
+            }
+            modelContext.insert(game)
+            do {
+                try modelContext.save()
+            } catch {
+                throw NSError(domain: "", code: 0, userInfo: nil)
+            }
         }
     }
 }
