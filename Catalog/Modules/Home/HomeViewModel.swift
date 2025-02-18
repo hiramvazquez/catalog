@@ -10,6 +10,14 @@ import Foundation
 final class HomeViewModel: BaseViewModel {
     @Inject private var localService: AppLocalManagerService
     @Published var gameList: [LocalGame] = []
+    @Published var searchText = ""
+    var filteredGames: [LocalGame] {
+        guard !searchText.isEmpty else { return gameList }
+        return gameList.filter { game in
+            game.title.lowercased().contains(searchText.lowercased()) ||
+            game.short_description.lowercased().contains(searchText.lowercased())
+        }
+    }
     
     enum Action {
         case getCatalogAndSave

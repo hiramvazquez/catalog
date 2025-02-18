@@ -23,12 +23,13 @@ struct HomeView: View {
     private var catalogList: some View {
         ScrollView {
             LazyVStack(spacing: 20) {
-                ForEach(viewModel.gameList, id: \.self) { game in
+                ForEach(viewModel.filteredGames, id: \.self) { game in
                     GameCellView(game: game, onSelected: {
                         viewModel.handle(.onSelectGame(game))
                     })
                 }
             }
+            .searchable(text: $viewModel.searchText)
             .padding(.vertical)
         }
         .refreshable {
