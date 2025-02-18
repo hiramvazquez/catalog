@@ -15,7 +15,7 @@ struct SplashView: View {
     }
     
     var body: some View {
-        Background(state: .loaded) {
+        Background(state: .loaded()) {
             Color.blue.ignoresSafeArea()
         }
         .onAppear {

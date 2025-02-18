@@ -20,7 +20,6 @@ struct AppAsyncImage: View {
             case .success(let image):
                 image
                     .resizable()
-                    .scaledToFit()
             @unknown default:
                 EmptyView()
             }

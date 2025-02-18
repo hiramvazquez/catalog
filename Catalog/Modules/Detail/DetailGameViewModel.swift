@@ -10,8 +10,25 @@ import Foundation
 final class DetailGameViewModel: BaseViewModel {
     @Published var game: LocalGame
     
+    enum Action {
+        case onRemoveGameButtonPressed
+    }
+    
+    func handleAction(_ action: Action) {
+        switch action {
+        case .onRemoveGameButtonPressed:
+            removeGameAction()
+        }
+    }
+    
     init(coordinator: Coordinator<AppRoutePath>, game: LocalGame) {
         self.game = game
         super.init(coordinator: coordinator)
+    }
+    
+    private func removeGameAction() {
+        self.state = .loaded((.removeGame, {
+            self.removeAlertView()
+        }))
     }
 }

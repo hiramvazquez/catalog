@@ -32,9 +32,13 @@ struct ToolbarItemModifier<T: View>: ViewModifier {
 }
 
 func imageBack(name: String) -> some View {
-    Image(systemName: name)
-        .foregroundColor(.primary)
-        .fontWeight(.black)
+    ZStack {
+        Circle().fill(Color.gray.opacity(0.5))
+        Image(systemName: name)
+            .foregroundColor(.primary)
+            .fontWeight(.black)
+            .padding(6)
+    }
 }
 
 enum NavigationState {

@@ -56,7 +56,7 @@ extension HomeViewModel {
                 } catch {
                     self.gameList = []
                 }
-                self.state = .loaded
+                self.state = .loaded()
             }
         }
         

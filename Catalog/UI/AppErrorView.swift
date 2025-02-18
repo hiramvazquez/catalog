@@ -12,7 +12,7 @@ struct AppErrorView: View {
     let action: Action
     
     var body: some View {
-        Background(state: .loaded) {
+        Background(state: .loaded()) {
             contentView
         }
     }
@@ -21,13 +21,13 @@ struct AppErrorView: View {
         Group {
             ContentUnavailableView {
                 Label {
-                        Text("Error")
-                    } icon: {
-                        Image(systemName: "exclamationmark.triangle")
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .padding(.vertical, 80)
-                    }
+                    Text("Error")
+                } icon: {
+                    Image(systemName: "exclamationmark.triangle")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .padding(.vertical, 80)
+                }
             } description: {
                 VStack {
                     Text(error.errorMessage)

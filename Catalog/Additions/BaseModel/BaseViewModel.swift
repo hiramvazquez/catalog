@@ -13,15 +13,17 @@ protocol BaseViewModelProtocol: ObservableObject {
     func execute<T, E>(request: AppRequest<T>, completion: @escaping (E) -> Void) where T : RequestParam, E: Decodable
 }
 
+typealias AlertModel = (alert: AlertType, action: Action)
+
 class BaseViewModel: BaseViewModelProtocol {
     @Inject var appService: AppManagerService
     @ObservedObject var route: Coordinator<AppRoutePath>
-    @Published var state: ViewState = .loaded
+    @Published var state: ViewState = .loaded()
     var cancellables = Set<AnyCancellable>()
     
     enum ViewState {
         case loading
-        case loaded
+        case loaded(AlertModel? = nil)
         case error(CustomError, Action)
     }
     
@@ -54,5 +56,9 @@ extension BaseViewModel {
         self.state = .error(error, {
             self.onErrorAction()
         })
+    }
+    
+    func removeAlertView() {
+        self.state = .loaded()
     }
 }
