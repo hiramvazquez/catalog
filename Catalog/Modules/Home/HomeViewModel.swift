@@ -52,7 +52,7 @@ extension HomeViewModel {
             Task {
                 do {
                     try await storeGameReturned(games: gameList)
-                    self.gameList = try await self.localService.retrieveAllGames()
+                    self.gameList = try await self.localService.retrieveAllGames().sorted(by: { $0.title < $1.title })
                 } catch {
                     self.gameList = []
                 }

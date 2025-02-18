@@ -34,32 +34,34 @@ final class LocalManagerService: AppLocalManagerService {
     }
     
     func storeAllGames(games: [Game]) async throws {
-        removeBeforeStore()
+        await removeBeforeStore()
         
         let localGames = games.map({ $0.toLocalGame() })
         do {
             for game in localGames {
-                try await storeLocalGame(game: game)
+                modelContext?.insert(game)
             }
+            try saveContext()
         }
         catch {
             throw error
         }
         
-        func removeBeforeStore() {
-            modelContext?.deletedModelsArray.forEach({ $0.modelContext?.delete($0) })
+        func removeBeforeStore() async {
+            guard let modelContext else { return }
+            let games = await retrieveAllGames()
+            games.forEach({ modelContext.delete($0) })
         }
-        
-        func storeLocalGame(game: LocalGame) async throws {
-            guard let modelContext = modelContext else {
-                throw NSError(domain: "", code: 0, userInfo: nil)
-            }
-            modelContext.insert(game)
-            do {
-                try modelContext.save()
-            } catch {
-                throw NSError(domain: "", code: 0, userInfo: nil)
-            }
+    }
+    
+    private func saveContext() throws {
+        guard let modelContext = modelContext else {
+            throw NSError(domain: "", code: 0, userInfo: nil)
+        }
+        do {
+            try modelContext.save()
+        } catch {
+            throw NSError(domain: "", code: 0, userInfo: nil)
         }
     }
 }
