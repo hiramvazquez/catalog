@@ -8,12 +8,14 @@
 import Foundation
 import Combine
 
+struct EmptyData: Encodable {}
+
 protocol AppManagerService {
-    func execute<T, E>(request: AppRequest<T>) -> AnyPublisher<AppResponse<E>, Error>
+    func execute<T, E>(request: AppRequest<T>) -> AnyPublisher<E, Error> where E: Decodable
 }
 
 final class ManagerService: BaseService, AppManagerService {
-    func execute<T, E>(request: AppRequest<T>) -> AnyPublisher<AppResponse<E>, any Error> where T : Encodable, E : Decodable {
+    func execute<T, E>(request: AppRequest<T>) -> AnyPublisher<E, any Error> where T : RequestParam, E: Decodable {
         return netWorkingManager.execute(parameters: request)
             .eraseToAnyPublisher()
     }

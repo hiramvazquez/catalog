@@ -8,6 +8,7 @@
 import Foundation
 
 protocol RequestParam: Encodable {
+    func toParams<T>() -> T? where T: Encodable
     func endPoint() -> APIEndpoints
 }
 
@@ -16,5 +17,9 @@ struct AppRequest<T: RequestParam> : Encodable {
     
     func endPoint() -> APIEndpoints {
         request.endPoint()
+    }
+    
+    func toParams() -> T? where T: Encodable {
+        request.toParams()
     }
 }

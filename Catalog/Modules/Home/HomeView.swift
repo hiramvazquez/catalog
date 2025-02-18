@@ -29,8 +29,9 @@ struct HomeView: View {
     
     private var catalogList: some View {
         List {
-            Text("Item 1")
-            Text("Item 2")
+            ForEach(viewModel.gameList, id: \.self) { game in
+                Text(game.title)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .principal) {

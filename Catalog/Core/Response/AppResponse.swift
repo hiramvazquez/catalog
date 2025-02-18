@@ -8,9 +8,5 @@
 import Foundation
 
 struct AppResponse<T> : Decodable where T : Decodable {
-    var response: BaseResponse<T>
-}
-
-struct BaseResponse<T> : Decodable where T : Decodable {
-    var data: T
+    var response: T
 }

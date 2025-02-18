@@ -34,7 +34,9 @@ final class NetworkingManager: NSObject, URLSessionDelegate, NetworkingManagerSe
                 request.setValue(value, forHTTPHeaderField: key)
             }
             
-            request.httpBody = try JSONEncoder().encode(parameters)
+            if let params = parameters.toParams() {
+                request.httpBody = try JSONEncoder().encode(params)
+            }
             
             return session.dataTaskPublisher(for: request)
                 .tryMap {

@@ -17,6 +17,7 @@ class BaseViewModel: ObservableObject, BaseViewModelProtocol {
     @Inject var appService: AppManagerService
     @ObservedObject var route: Coordinator<AppRoutePath>
     @Published var state: ViewState = .loaded
+    var cancellables = Set<AnyCancellable>()
     
     enum ViewState {
         case loading
@@ -24,7 +25,6 @@ class BaseViewModel: ObservableObject, BaseViewModelProtocol {
         case error(CustomError)
     }
     
-    var cancellables = Set<AnyCancellable>()
     init(coordinator: Coordinator<AppRoutePath>) {
         self.route = coordinator
     }
@@ -33,7 +33,6 @@ class BaseViewModel: ObservableObject, BaseViewModelProtocol {
 extension BaseViewModel {
     func execute<T, E>(request: AppRequest<T>, completion: @escaping (E) -> Void) where T : RequestParam, E: Decodable {
         appService.execute(request: request)
-            .map { $0.response.data }
             .sink { [weak self] completion in
                 switch completion {
                 case .finished: break

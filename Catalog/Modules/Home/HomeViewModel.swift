@@ -8,6 +8,7 @@
 import Foundation
 
 final class HomeViewModel: BaseViewModel {
+    @Published var gameList: [Game] = []
     enum Action {
         case getCatalog
     }
@@ -28,8 +29,10 @@ final class HomeViewModel: BaseViewModel {
 
 extension HomeViewModel {
     private func getCatalogAction() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.state = .loaded
+        let request = AppRequest(request: GameListRequest())
+        execute(request: request) { [weak self] gameList in
+            self?.gameList = gameList
+            self?.state = .loaded
         }
     }
 }
