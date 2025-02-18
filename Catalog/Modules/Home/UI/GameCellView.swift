@@ -36,7 +36,7 @@ struct GameCellView: View {
             .padding([.horizontal, .bottom])
             .padding(.top, 50)
             .background(
-                LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.1), .black.opacity(0.6), .black]),
+                LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.1), .black.opacity(0.5), .black.opacity(0.8)]),
                                startPoint: .top,
                                endPoint: .bottom)
             )
