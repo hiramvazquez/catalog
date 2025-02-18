@@ -15,19 +15,23 @@ struct DetailGameView: View {
     }
     
     var body: some View {
-        Background {
-            VStack {
-                if let url = viewModel.game.imageURL {
-                    AppAsyncImage(imageURL: url, imageDefault: Image(.iconGamePreview))
-                }
-                VStack {
-                    titleView
-                    Spacer()
-                }
-                .padding(.horizontal, 8)
-            }
+        Background(state: .loaded) {
+            contentView
         }
         .edgesIgnoringSafeArea(.top)
+    }
+    
+    private var contentView: some View {
+        VStack {
+            if let url = viewModel.game.imageURL {
+                AppAsyncImage(imageURL: url, imageDefault: Image(.iconGamePreview))
+            }
+            VStack {
+                titleView
+                Spacer()
+            }
+            .padding(.horizontal, 8)
+        }
     }
     
     private var titleView: some View {

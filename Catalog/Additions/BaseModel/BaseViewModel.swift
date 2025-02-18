@@ -9,11 +9,11 @@ import Foundation
 import Combine
 import SwiftUI
 
-protocol BaseViewModelProtocol {
+protocol BaseViewModelProtocol: ObservableObject {
     func execute<T, E>(request: AppRequest<T>, completion: @escaping (E) -> Void) where T : RequestParam, E: Decodable
 }
 
-class BaseViewModel: ObservableObject, BaseViewModelProtocol {
+class BaseViewModel: BaseViewModelProtocol {
     @Inject var appService: AppManagerService
     @ObservedObject var route: Coordinator<AppRoutePath>
     @Published var state: ViewState = .loaded
@@ -22,11 +22,15 @@ class BaseViewModel: ObservableObject, BaseViewModelProtocol {
     enum ViewState {
         case loading
         case loaded
-        case error(CustomError)
+        case error(CustomError, Action)
     }
     
     init(coordinator: Coordinator<AppRoutePath>) {
         self.route = coordinator
+    }
+    
+    func onErrorAction() {
+        fatalError("Implementar onErrorAction en cada viewModel")
     }
 }
 
@@ -47,6 +51,8 @@ extension BaseViewModel {
     }
     
     private func proccessError(error: CustomError) {
-        self.state = .error(error)
+        self.state = .error(error, {
+            self.onErrorAction()
+        })
     }
 }

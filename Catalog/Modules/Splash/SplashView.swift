@@ -15,12 +15,12 @@ struct SplashView: View {
     }
     
     var body: some View {
-        Background {
-            Color.red.ignoresSafeArea()
+        Background(state: .loaded) {
+            Color.blue.ignoresSafeArea()
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                viewModel.hanleAction(.navigateToHome)
+                viewModel.handleAction(.loaderCompleted)
             }
         }
     }

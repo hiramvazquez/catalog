@@ -29,6 +29,10 @@ final class HomeViewModel: BaseViewModel {
         state = .loading
         handle(.getCatalog)
     }
+    
+    override func onErrorAction() {
+        
+    }
 }
 
 extension HomeViewModel {

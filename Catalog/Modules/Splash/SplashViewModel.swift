@@ -9,12 +9,12 @@ import Foundation
 
 final class SplashViewModel: BaseViewModel {
     enum Action {
-        case navigateToHome
+        case loaderCompleted
     }
     
-    func hanleAction(_ action: Action) {
+    func handleAction(_ action: Action) {
         switch action {
-        case .navigateToHome:
+        case .loaderCompleted:
             navigateToHomeAction()
         }
     }

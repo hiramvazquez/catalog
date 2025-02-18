@@ -9,9 +9,10 @@ import SwiftUI
 
 struct AppErrorView: View {
     let error: CustomError
+    let action: Action
     
     var body: some View {
-        Background {
+        Background(state: .loaded) {
             contentView
         }
     }
@@ -25,12 +26,22 @@ struct AppErrorView: View {
                         Image(systemName: "exclamationmark.triangle")
                             .resizable()
                             .frame(width: 100, height: 100)
+                            .padding(.vertical, 80)
                     }
             } description: {
-                Text(error.errorMessage)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.vertical)
+                VStack {
+                    Text(error.errorMessage)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.vertical)
+                    Spacer()
+                    
+                    Button {
+                        action()
+                    } label: {
+                        Text("Aceptar")
+                    }
+                }
             }
         }
         .foregroundStyle(.gray)
@@ -39,5 +50,5 @@ struct AppErrorView: View {
 }
 
 #Preview {
-    AppErrorView(error: .general)
+    AppErrorView(error: .general, action: {})
 }

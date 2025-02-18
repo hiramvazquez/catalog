@@ -15,20 +15,13 @@ struct HomeView: View {
     }
     
     var body: some View {
-        Background {
-            switch viewModel.state {
-            case .loading:
-                AppLoadingView()
-            case .error(let error):
-                AppErrorView(error: error)
-            case .loaded:
-                catalogList()
-            }
+        Background(state: viewModel.state) {
+            catalogList
         }
     }
     
-    private func catalogList() -> some View {
-        return ScrollView {
+    private var catalogList: some View {
+        ScrollView {
             LazyVStack(spacing: 20) {
                 ForEach(viewModel.gameList, id: \.self) { game in
                     GameCellView(game: game, onSelected: {

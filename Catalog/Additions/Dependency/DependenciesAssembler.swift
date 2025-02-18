@@ -11,7 +11,7 @@ protocol DependencyModule {
     func register()
 }
 
-class DependenciesAssembler {
+final class DependenciesAssembler {
     static let shared = DependenciesAssembler()
     
     private let modules: [DependencyModule] = [
