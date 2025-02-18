@@ -12,7 +12,7 @@ protocol RequestParam: Encodable {
     func endPoint() -> APIEndpoints
 }
 
-struct AppRequest<T: RequestParam> : Encodable {
+struct AppRequest<T: RequestParam> {
     var request: T
     
     func endPoint() -> APIEndpoints {
