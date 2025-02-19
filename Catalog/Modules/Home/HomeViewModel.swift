@@ -54,10 +54,9 @@ final class HomeViewModel: BaseViewModel {
 extension HomeViewModel {
     private func getCatalogAndSaveAction() {
         let request = AppRequest(request: GameListRequest())
-        execute(request: request) { [weak self] gameList in
-            guard let self = self else { return }
-            Task {
-                await self.storeAllGamesAction(gameList)
+        Task {
+            if let games: [Game] = await execute(request: request) {
+                await self.storeAllGamesAction(games)
                 await self.getCatalogFromCacheAction()
                 self.state = .loaded()
             }

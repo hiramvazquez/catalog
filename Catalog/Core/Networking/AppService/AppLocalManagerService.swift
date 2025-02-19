@@ -20,7 +20,6 @@ final class LocalDataBaseManagerService {
         self.modelContext = modelContainer.mainContext
     }
     
-    /// Agregar múltiples objetos
     func addItems<T: PersistentModel>(_ items: [T]) throws {
         try removeAll(ofType: T.self)
         for item in items {
@@ -29,7 +28,6 @@ final class LocalDataBaseManagerService {
         try modelContext.save()
     }
     
-    /// Agregar un nuevo objeto a la base de datos
     func addItem<T: PersistentModel>(_ item: T) throws {
         modelContext.insert(item)
         try modelContext.save()
@@ -39,13 +37,11 @@ final class LocalDataBaseManagerService {
         try modelContext.fetch(FetchDescriptor<T>())
     }
     
-    /// Eliminar un objeto específico
     func remove<T: PersistentModel>(_ item: T) throws {
         modelContext.delete(item)
         try modelContext.save()
     }
     
-    /// Eliminar todos los objetos de un tipo específico
     func removeAll<T: PersistentModel>(ofType type: T.Type) throws {
         try modelContext.delete(model: type)
         try modelContext.save()

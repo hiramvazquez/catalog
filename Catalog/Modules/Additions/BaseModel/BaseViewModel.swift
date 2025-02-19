@@ -9,14 +9,15 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 protocol BaseViewModelProtocol: ObservableObject {
-    func execute<T, E>(request: AppRequest<T>, completion: @escaping (E) -> Void) where T : RequestParam, E: Decodable
+    func execute<T, E>(request: AppRequest<T>) async -> E? where T: RequestParam, E: Decodable, E: Sendable
 }
 
 typealias AlertModel = (alert: AlertType, action: Action)
 
 class BaseViewModel: BaseViewModelProtocol {
-    @Inject var apiService: ApiManagerService
+    @Inject var apiService: NetworkingManagerService
     var localDataBase = LocalDataBaseManagerService.shared
     
     @ObservedObject var route: Coordinator<AppRoutePath>
@@ -40,19 +41,17 @@ class BaseViewModel: BaseViewModelProtocol {
 
 extension BaseViewModel {
     // llamada global a la API
-    func execute<T, E>(request: AppRequest<T>, completion: @escaping (E) -> Void) where T : RequestParam, E: Decodable {
-        apiService.execute(request: request)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished: break
-                case .failure(let error):
-                    guard let customError = error as? CustomError else { return }
-                    self?.showError(error: customError)
-                }
-            } receiveValue: { data in
-                completion(data)
-            }
-            .store(in: &cancellables)
+    func execute<T, E>(request: AppRequest<T>) async -> E? where T : RequestParam, E : Decodable, E : Sendable {
+        do {
+            let result: E = try await apiService.execute(parameters: request)
+            return result
+        } catch let error as CustomError {
+            showError(error: error)
+            return nil
+        } catch {
+            showError(error: .general)
+            return nil
+        }
     }
     
     func showError(error: CustomError) {

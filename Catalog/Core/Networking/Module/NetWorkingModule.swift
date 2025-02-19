@@ -9,7 +9,8 @@ import Foundation
 
 struct NetWorkingModule: DependencyModule {
     func register() {
-        Dependency.register(NetworkingManager(), lifecycle: .singleton, as: NetworkingManagerService.self)
-        Dependency.register(ManagerService(), lifecycle: .singleton, as: ApiManagerService.self)
+        Task {@MainActor in
+            Dependency.register(NetworkingManager(), lifecycle: .singleton, as: NetworkingManagerService.self)
+        }        
     }
 }

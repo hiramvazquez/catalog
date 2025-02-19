@@ -8,88 +8,53 @@
 import Combine
 import Foundation
 
+@MainActor
 protocol NetworkingManagerService {
-    func execute<E: RequestParam, T: Decodable>(parameters: AppRequest<E>) -> AnyPublisher<T, Error>
+    func execute<E, T>(parameters: AppRequest<E>) async throws -> T where E: RequestParam, T: Decodable
 }
-// Llamada global a la API
+
 final class NetworkingManager: NSObject, URLSessionDelegate, NetworkingManagerService {
-    private let session: URLSession
-    
-    override init() {
-        session = URLSession(configuration: .default)
-    }
-    
-    func execute<E, T>(parameters: AppRequest<E>) -> AnyPublisher<T, any Error> where E : RequestParam, T : Decodable {
+    func execute<E, T>(parameters: AppRequest<E>) async throws -> T where E: RequestParam, T: Decodable {
+        let endPoint = parameters.endPoint()
+        
+        guard let route = endPoint.resource.route else {
+            throw CustomError.general
+        }
+        
+        var request = URLRequest(url: route)
+        request.httpMethod = endPoint.resource.method.rawValue
+        
+        // Agregar headers
+        endPoint.resource.header.defaults.forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        
+        // Agregar parámetros si existen
+        if let params = parameters.toParams() {
+            request.httpBody = try JSONEncoder().encode(params)
+        }
+        
         do {
-            let endPoint = parameters.endPoint()
+            let (data, response) = try await URLSession.shared.data(for: request)
             
-            guard let route = endPoint.resource.route else {
-                return Fail(error: CustomError.general).eraseToAnyPublisher()
+            // Verificar la respuesta HTTP
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw CustomError.invalidResponse
             }
             
-            var request = URLRequest(url: route)
-            request.httpMethod = endPoint.resource.method.rawValue
-            
-            endPoint.resource.header.defaults.forEach { (key, value) in
-                request.setValue(value, forHTTPHeaderField: key)
-            }
-            
-            if let params = parameters.toParams() {
-                request.httpBody = try JSONEncoder().encode(params)
-            }
-            
-            return session.dataTaskPublisher(for: request)
-                .tryMap {
-                    guard let response = $0.response as? HTTPURLResponse else {
-                        throw CustomError.invalidResponse
-                    }
-                    
-                   // print("----------\nCode:\n\(response.statusCode)\n-------------")
-                   // self.logs(output: $0, request: request)
-                    
-                    switch response.statusCode {
-                    case (200..<300):
-                        return $0.data
-                    default:
-                        do {
-                            let decoded = try JSONDecoder().decode(CustomError.ApiError.self, from: $0.data)
-                            throw CustomError.apiError(decoded)
-                        } catch {
-                            throw error
-                        }
-                    }
+            switch httpResponse.statusCode {
+            case 200..<300:
+                return try JSONDecoder().decode(T.self, from: data)
+            default:
+                do {
+                    let decodedError = try JSONDecoder().decode(CustomError.ApiError.self, from: data)
+                    throw CustomError.apiError(decodedError)
+                } catch {
+                    throw error
                 }
-                .decode(type: T.self, decoder: JSONDecoder())
-                .mapError({ error in
-                    if let error = error as? CustomError {
-                        return error
-                    } else {
-                        return CustomError.invalidResponse
-                    }
-                })
-                .receive(on: RunLoop.main)
-                .eraseToAnyPublisher()
+            }
         } catch {
-            return Fail(error: CustomError.general).eraseToAnyPublisher()
+            throw CustomError.invalidResponse
         }
-    }
-    
-    private func logs(output: URLSession.DataTaskPublisher.Output, request: URLRequest) {
-        let responseString = NSString(data: output.data, encoding: String.Encoding.utf8.rawValue)
-        
-        if let url = request.url?.absoluteString {
-            print("----------\nURL:\n\(url)\n-------------")
-        }
-        
-        if let headers = request.allHTTPHeaderFields {
-            print("-------------\nHeaders:\n\(headers)\n-------------")
-        }
-        
-        if let httpBody = request.httpBody,
-           let request = NSString(data: httpBody, encoding: String.Encoding.utf8.rawValue)
-           {
-            print("-------------\nRequest:\n\(request)\n------------")
-        }
-        print("-------------\nResponse:\n\(String(describing: responseString))\n------------")
     }
 }
