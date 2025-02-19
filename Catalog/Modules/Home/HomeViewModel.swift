@@ -46,9 +46,7 @@ final class HomeViewModel: BaseViewModel {
         handle(.getCatalogAndSave)
     }
     
-    override func onErrorAction() {
-        
-    }
+    override func onErrorAction() {}
 }
 
 extension HomeViewModel {
@@ -56,17 +54,17 @@ extension HomeViewModel {
         let request = AppRequest(request: GameListRequest())
         Task {
             if let games: [Game] = await execute(request: request) {
-                await self.storeAllGamesAction(games)
+                await storeAllGamesAction(games)
                 await self.getCatalogFromCacheAction()
                 self.state = .loaded()
             }
         }
-    }
-    
-    private func storeAllGamesAction(_ gameList: [Game]) async {
-        do {
-            try localDataBase.addItems(gameList.map({ $0.toLocalGame() }))
-        } catch { }
+        
+        func storeAllGamesAction(_ gameList: [Game]) async {
+            do {
+                try localDataBase.addItems(gameList.map({ $0.toLocalGame() }))
+            } catch { }
+        }
     }
     
     private func getCatalogFromCacheAction() async {

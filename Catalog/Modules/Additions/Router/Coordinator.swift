@@ -49,6 +49,8 @@ final class Coordinator<T: Hashable>: ObservableObject {
     @Published var navigationMain: NavigationPaths<T>
     @Published var navigationModal: NavigationPaths<T>?
     @Published var isModalPresented: Bool = false
+    @Published var isSheetPresented: Bool = false
+    @Published var sheet: T?
     
     init(initialRoot: T) {
         self.navigationMain = (root: initialRoot, paths: [])
@@ -110,6 +112,16 @@ final class Coordinator<T: Hashable>: ObservableObject {
     func dismissModal() {
         navigationState = .main
     }
+    
+    func presentSheet(_ path: T) {
+        sheet = path
+        isSheetPresented = true
+    }
+    
+    func removeSheet() {
+        isSheetPresented = false
+        sheet = nil
+    }
 }
 
 struct RouterView<T: Hashable, Content: View>: View {
@@ -157,5 +169,17 @@ struct RouterView<T: Hashable, Content: View>: View {
             }
         }
         .animation(.easeIn(duration: 0.4), value: coordinator.isModalPresented)
+        .sheet(isPresented: $coordinator.isSheetPresented) {
+            if let sheetContent = coordinator.sheet {
+                NavigationView {
+                    content(sheetContent)
+                        .toolbarItem(placement: .navigationBarTrailing) {
+                            AppButtonBar(imageName: "xmark.circle.fill", action: {
+                                coordinator.removeSheet()
+                            })
+                        }
+                }
+            }
+        }
     }
 }

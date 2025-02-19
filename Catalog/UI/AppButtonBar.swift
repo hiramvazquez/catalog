@@ -17,7 +17,7 @@ struct AppButtonBar: View {
         } label: {
             Image(systemName: imageName)
                 .font(.title)
-                .foregroundStyle(.black, .gray.opacity(0.7))
+                .foregroundStyle(.blue, Color(.systemGray6))
         }
     }
 }

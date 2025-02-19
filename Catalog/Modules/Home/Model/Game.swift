@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class LocalGame {
+class LocalGame: Hash {
     var id: Int
     var title: String
     var thumbnail: String
@@ -48,6 +48,10 @@ class LocalGame {
     
     var imageURL: URL? {
         URL(string: thumbnail)
+    }
+    
+    var gameURL: URL? {
+        URL(string: game_url)
     }
 }
 

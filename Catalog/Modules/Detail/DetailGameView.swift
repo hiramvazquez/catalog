@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DetailGameView: View {
     @StateObject var viewModel: DetailGameViewModel
-    @State var showDetailAnimated: Bool = false
+    @State private var animateContent = false
     
     init(coordinator: Coordinator<AppRoutePath>, game: LocalGame) {
         _viewModel = StateObject(wrappedValue: DetailGameViewModel(coordinator: coordinator, game: game))
@@ -24,25 +24,21 @@ struct DetailGameView: View {
                 viewModel.handleAction(.onRemoveGameButtonPressed)
             })
         }
-        .sheet(isPresented: $viewModel.showEditGameView, content: {
-            Text("Hola")
-        }).presentationDetents([.medium])
+        .toolbarItem(placement: .navigationBarTrailing) {
+            AppButtonBar(imageName: "pencil.circle.fill", action: {
+                viewModel.handleAction(.onEditGameButtonPressed)
+            })
+        }
         .edgesIgnoringSafeArea(.top)
         .onAppear {
-            withAnimation {
-                showDetailAnimated = true
-            }
+            animateContent = true
         }
     }
     
     private var contentView: some View {
-        VStack {
+        VStack(spacing: 0) {
             headerView
-            descriptionView()
-                .offset(y: showDetailAnimated ? -100 : 0)
-                .opacity(showDetailAnimated ? 1 : 0)
-                .animation(.easeInOut(duration: 1), value: showDetailAnimated)
-            Spacer()
+            descriptionView.padding()
         }
     }
     
@@ -50,73 +46,73 @@ struct DetailGameView: View {
         ZStack(alignment: .bottom) {
             if let url = viewModel.game.imageURL {
                 AppAsyncImage(imageURL: url, imageDefault: Image(.iconGamePreview))
-                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height/2)
             }
             gradientView
-            titleView
         }
     }
     
     private var gradientView: some View {
-        LinearGradient(gradient: Gradient(colors: [.clear, .white.opacity(0.4), .white.opacity(0.8), .white]),
+        LinearGradient(gradient: Gradient(colors: [.clear, .white.opacity(0.3), .white]),
                        startPoint: .top,
                        endPoint: .bottom)
-        .frame(height: 300)
+        .frame(height: 200)
     }
     
-    private var titleView: some View {
-        Text(viewModel.game.title)
-            .foregroundStyle(Color.black)
-            .font(.title)
-            .fontWeight(.bold)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding()
-            .padding(.bottom, 100)
+    private var descriptionView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(viewModel.game.title)
+                .font(.title)
+                .bold()
+            Text(viewModel.game.short_description)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            Divider()
+            
+            VStack(alignment: .leading, spacing: 10) {
+                DetailRow(label: "Fecha de Lanzamiento", value: viewModel.game.release_date)
+                DetailRow(label: "Plataforma", value: viewModel.game.platform)
+                DetailRow(label: "Editora", value: viewModel.game.publisher)
+                DetailRow(label: "Compañía", value: viewModel.game.developer)
+                DetailRow(label: "Género", value: viewModel.game.genre)
+                DetailRow(label: "Página web", value: viewModel.game.game_url)
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(radius: 5)
+        .opacity(animateContent ? 1 : 0)
+        .offset(y: animateContent ? -50 : 0)
+        .animation(.easeOut(duration: 1).delay(0.5), value: animateContent)
     }
     
-    private func descriptionView() -> some View {
-        let columns: [GridItem] = Array(repeating: .init(.fixed(150)), count: 2)
-        return VStack {
+    private func DetailRow(label: String, value: String) -> some View {
+        return HStack {
             Group {
-                Text(viewModel.game.short_description)
-                    .padding(.bottom)
-                
-                LazyVGrid(columns: columns, spacing: 20) {
-                    verticalInfo(header: "Lanzamiento", info: viewModel.game.release_date)
-                    verticalInfo(header: "Compañía", info: viewModel.game.developer)
-                    verticalInfo(header: "Editora", info: viewModel.game.publisher)
-                    verticalInfo(header: "Plataforma", info: viewModel.game.platform)
+                Text(label + ":")
+                    .bold()
+                Spacer()
+                if isURL(value: value) {
+                    Button {
+                        viewModel.handleAction(.onVisitButtonPressed)
+                    } label: {
+                        Text("Visitar")
+                    }
+                    .buttonStyle(.borderedProminent)
+                } else {
+                    Text(value)
+                        .foregroundColor(.blue)
                 }
             }
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .multilineTextAlignment(.center)
             .font(.subheadline)
-            .foregroundStyle(Color.black)
-            .fontWeight(.regular)
         }
-        .padding(.horizontal)
-    }
-    
-    private func verticalInfo(header: String, info: String) -> some View {
-        VStack(spacing: 10) {
-            Text(header)
-                .font(.footnote)
-                .fontWeight(.bold)
-            Text(info)
-                .font(.footnote)
-                .minimumScaleFactor(0.8)
+        
+        func isURL(value: String) -> Bool {
+            value.contains("https://")
         }
-        .frame(width: 100, height: 60)
-        .padding()
-        .background( backgroundColor )
-        .cornerRadius(8)
-    }
-    
-    private var backgroundColor: some View {
-        Color.teal
     }
 }
 

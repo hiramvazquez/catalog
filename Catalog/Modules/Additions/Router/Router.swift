@@ -11,9 +11,14 @@ import SwiftUI
 typealias Hash = Hashable & Identifiable
 
 enum AppRoutePath: Hash {
+    static func == (lhs: AppRoutePath, rhs: AppRoutePath) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     case splash
     case home
     case detailGame(LocalGame)
+    case editGame(Binding<LocalGame>, Action)
     
     @MainActor
     static func appView(coordinator: Coordinator<AppRoutePath>) -> some View {
@@ -25,6 +30,8 @@ enum AppRoutePath: Hash {
                 AnyView(HomeView(coordinator: coordinator))
             case .detailGame(let game):
                 AnyView(DetailGameView(coordinator: coordinator, game: game))
+            case .editGame(let game, let action):
+                AnyView(EditGameView(coordinator: coordinator, game: game, onCompleted: action))
             }
         }
     }
