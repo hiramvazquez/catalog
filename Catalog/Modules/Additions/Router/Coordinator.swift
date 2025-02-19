@@ -31,16 +31,6 @@ struct ToolbarItemModifier<T: View>: ViewModifier {
     }
 }
 
-func imageBack(name: String) -> some View {
-    ZStack {
-        Circle().fill(Color.gray.opacity(0.5))
-        Image(systemName: name)
-            .foregroundColor(.primary)
-            .fontWeight(.black)
-            .padding(6)
-    }
-}
-
 enum NavigationState {
     case main
     case modal
@@ -137,10 +127,9 @@ struct RouterView<T: Hashable, Content: View>: View {
                             .navigationBarBackButtonHidden(true)
                             .toolbarItem(placement: .navigationBarLeading) {
                                 if paths.count > 0 {
-                                    imageBack(name: "chevron.left")
-                                        .onTapGesture {
-                                            coordinator.pop()
-                                        }
+                                    AppButtonBar(imageName: "chevron.left.circle.fill", action: {
+                                        coordinator.pop()
+                                    })
                                 }
                             }
                     }
@@ -155,12 +144,9 @@ struct RouterView<T: Hashable, Content: View>: View {
                                 content(path)
                                     .navigationBarBackButtonHidden(navigationModal.paths.count > 0)
                                     .toolbarItem(placement: .navigationBarLeading) {
-                                        imageBack(name: "chevron.left")
-                                            .onTapGesture {
-                                                if navigationModal.paths.count > 0 {
-                                                    coordinator.pop()
-                                                }
-                                            }
+                                        AppButtonBar(imageName: "chevron.left.circle.fill", action: {
+                                            coordinator.pop()
+                                        })
                                     }
                             }
                     }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 import SwiftUI
 
 @MainActor
@@ -22,7 +21,6 @@ class BaseViewModel: BaseViewModelProtocol {
     
     @ObservedObject var route: Coordinator<AppRoutePath>
     @Published var state: ViewState = .loaded()
-    var cancellables = Set<AnyCancellable>()
     
     enum ViewState {
         case loading

@@ -19,19 +19,18 @@ struct DetailGameView: View {
         Background(state: viewModel.state) {
             contentView
         }
+        .toolbarItem(placement: .navigationBarTrailing) {
+            AppButtonBar(imageName: "trash.circle.fill", action: {
+                viewModel.handleAction(.onRemoveGameButtonPressed)
+            })
+        }
+        .sheet(isPresented: $viewModel.showEditGameView, content: {
+            Text("Hola")
+        }).presentationDetents([.medium])
         .edgesIgnoringSafeArea(.top)
         .onAppear {
             withAnimation {
                 showDetailAnimated = true
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    viewModel.handleAction(.onRemoveGameButtonPressed)
-                } label: {
-                    imageBack(name: "trash")
-                }
             }
         }
     }
@@ -123,5 +122,5 @@ struct DetailGameView: View {
 
 #Preview {
     let coordinator = Coordinator<AppRoutePath>(initialRoot: .detailGame(AppPreview.shared.game))
-    DetailGameView(coordinator: coordinator, game: AppPreview.shared.game)
+    AppRoutePath.appView(coordinator: coordinator)
 }

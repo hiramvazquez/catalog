@@ -9,6 +9,7 @@ import Foundation
 
 final class DetailGameViewModel: BaseViewModel {
     @Published var game: LocalGame
+    @Published var showEditGameView: Bool = false
     
     enum Action {
         case onRemoveGameButtonPressed
