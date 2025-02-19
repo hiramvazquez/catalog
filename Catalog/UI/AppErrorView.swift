@@ -18,33 +18,31 @@ struct AppErrorView: View {
     }
     
     var contentView: some View {
-        Group {
-            ContentUnavailableView {
-                Label {
-                    Text("Error")
-                } icon: {
-                    Image(systemName: "exclamationmark.triangle")
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .padding(.vertical, 80)
-                }
-            } description: {
-                VStack {
-                    Text(error.errorMessage)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.vertical)
-                    Spacer()
-                    
-                    Button {
-                        action()
-                    } label: {
-                        Text("Aceptar")
-                    }
-                }
+        VStack {
+            Image(systemName: "exclamationmark.triangle")
+                .resizable()
+                .frame(width: 100, height: 100)
+                .padding(.vertical, 80)
+            
+            Text("Error")
+                .font(.title)
+                .fontWeight(.bold)
+            
+            Text(error.errorMessage)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.vertical)
+            
+            Spacer()
+            
+            Button {
+                action()
+            } label: {
+                Text("Aceptar")
+                    .foregroundStyle(.white)
             }
+            .buttonStyle(.borderedProminent)
         }
-        .foregroundStyle(.gray)
         .padding()
     }
 }

@@ -26,9 +26,25 @@ final class DetailGameViewModel: BaseViewModel {
         super.init(coordinator: coordinator)
     }
     
+    override func onErrorAction() {
+        state = .loaded()
+    }
+}
+
+extension DetailGameViewModel {
     private func removeGameAction() {
         self.state = .loaded((.removeGame, {
             self.removeAlertView()
+            Task {
+                self.removeGame()
+                self.route.pop()
+            }
         }))
+    }
+    
+    private func removeGame() {
+        do {
+            try localDataBase.remove(game)
+        } catch {}
     }
 }

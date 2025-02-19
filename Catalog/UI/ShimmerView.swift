@@ -14,11 +14,11 @@ struct ShimmerModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlay(
-                LinearGradient(gradient: Gradient(colors: [.clear, .white, .clear]),
+                LinearGradient(gradient: Gradient(colors: [.clear, .white.opacity(0.7), .clear]),
                                startPoint: .leading,
                                endPoint: .trailing)
                 .mask(content)
-                .offset(x: phase * 400)
+                .offset(x: phase * 300)
                 .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false), value: phase)
             )
             .onAppear {
@@ -35,12 +35,12 @@ extension View {
 
 struct ShimmerView: View {
     var body: some View {
-        Color.gray.opacity(0.1)
-            .frame(width: 365, height: 206)
+        Color.gray.opacity(0.5)
         .shimmer()
     }
 }
 
 #Preview {
     ShimmerView()
+        .frame(width: 200, height: 40)
 }

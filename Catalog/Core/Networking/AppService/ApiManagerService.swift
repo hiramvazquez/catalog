@@ -10,11 +10,11 @@ import Combine
 
 struct EmptyData: Encodable {}
 
-protocol AppManagerService {
+protocol ApiManagerService {
     func execute<T, E>(request: AppRequest<T>) -> AnyPublisher<E, Error> where E: Decodable
 }
-
-final class ManagerService: BaseService, AppManagerService {
+// Servicio global de llamada a la API
+final class ManagerService: BaseService, ApiManagerService {
     func execute<T, E>(request: AppRequest<T>) -> AnyPublisher<E, any Error> where T : RequestParam, E: Decodable {
         return netWorkingManager.execute(parameters: request)
             .eraseToAnyPublisher()

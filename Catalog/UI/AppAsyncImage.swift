@@ -29,6 +29,7 @@ struct AppAsyncImage: View {
 
 #Preview {
     AppAsyncImage(imageURL: URL(string: "https://www.freetogame.com/g/582/thumbnail.jpg")!, imageDefault: nil)
+        .frame(width: 300, height: 200)
 }
 
 struct CacheAsyncImage<Content>: View where Content: View {
@@ -72,7 +73,7 @@ struct CacheAsyncImage<Content>: View where Content: View {
 }
 
 private class ImageCache {
-    static private var cache: [URL: Image] = [:]
+    static nonisolated(unsafe) private var cache: [URL: Image] = [:]
     static subscript(url: URL) -> Image? {
         get {
             ImageCache.cache[url]

@@ -15,6 +15,7 @@ enum AppRoutePath: Hash {
     case home
     case detailGame(LocalGame)
     
+    @MainActor
     static func appView(coordinator: Coordinator<AppRoutePath>) -> some View {
         RouterView(coordinator: coordinator) { route in
             switch route {

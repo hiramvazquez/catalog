@@ -8,60 +8,46 @@
 import Foundation
 import SwiftData
 
-protocol AppLocalManagerService {
-    func retrieveAllGames() async throws -> [LocalGame]
-    func storeAllGames(games: [Game]) async throws
-}
-
-final class LocalManagerService: AppLocalManagerService {
-    private var modelContainer: ModelContainer?
-    private var modelContext: ModelContext?
+final class LocalDataBaseManagerService {
+    private var modelContainer: ModelContainer
+    private var modelContext: ModelContext
+    @MainActor
+    static let shared = LocalDataBaseManagerService()
     
+    @MainActor
     init() {
-        Task { @MainActor in
-            self.modelContainer = try? ModelContainer(for: LocalGame.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-            self.modelContext = modelContainer?.mainContext
-        }
+        self.modelContainer = try! ModelContainer(for: LocalGame.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        self.modelContext = modelContainer.mainContext
     }
     
-    func retrieveAllGames() async -> [LocalGame] {
-        guard let modelContext else { return [] }
-        do {
-            return try modelContext.fetch(FetchDescriptor<LocalGame>())
-        } catch {
-            return []
+    /// Agregar múltiples objetos
+    func addItems<T: PersistentModel>(_ items: [T]) throws {
+        try removeAll(ofType: T.self)
+        for item in items {
+            modelContext.insert(item)
         }
+        try modelContext.save()
     }
     
-    func storeAllGames(games: [Game]) async throws {
-        await removeBeforeStore()
-        
-        let localGames = games.map({ $0.toLocalGame() })
-        do {
-            for game in localGames {
-                modelContext?.insert(game)
-            }
-            try saveContext()
-        }
-        catch {
-            throw error
-        }
-        
-        func removeBeforeStore() async {
-            guard let modelContext else { return }
-            let games = await retrieveAllGames()
-            games.forEach({ modelContext.delete($0) })
-        }
+    /// Agregar un nuevo objeto a la base de datos
+    func addItem<T: PersistentModel>(_ item: T) throws {
+        modelContext.insert(item)
+        try modelContext.save()
     }
     
-    private func saveContext() throws {
-        guard let modelContext = modelContext else {
-            throw NSError(domain: "", code: 0, userInfo: nil)
-        }
-        do {
-            try modelContext.save()
-        } catch {
-            throw NSError(domain: "", code: 0, userInfo: nil)
-        }
+    func fetchAll<T: PersistentModel>(ofType type: T.Type) throws -> [T] {
+        try modelContext.fetch(FetchDescriptor<T>())
+    }
+    
+    /// Eliminar un objeto específico
+    func remove<T: PersistentModel>(_ item: T) throws {
+        modelContext.delete(item)
+        try modelContext.save()
+    }
+    
+    /// Eliminar todos los objetos de un tipo específico
+    func removeAll<T: PersistentModel>(ofType type: T.Type) throws {
+        try modelContext.delete(model: type)
+        try modelContext.save()
     }
 }

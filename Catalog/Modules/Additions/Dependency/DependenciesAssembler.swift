@@ -12,7 +12,7 @@ protocol DependencyModule {
 }
 
 final class DependenciesAssembler {
-    static let shared = DependenciesAssembler()
+    @MainActor static let shared = DependenciesAssembler()
     
     private let modules: [DependencyModule] = [
         NetWorkingModule()

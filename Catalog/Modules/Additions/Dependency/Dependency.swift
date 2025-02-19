@@ -38,7 +38,7 @@ class Dependency {
     }
 }
 
-private var storage: Storage = .init()
+nonisolated(unsafe) private let storage: Storage = .init()
 private class Storage {
     var instances: [String: Any] = [:]
     var instancers: [String: () -> Any] = [:]

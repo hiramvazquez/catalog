@@ -16,7 +16,9 @@ protocol BaseViewModelProtocol: ObservableObject {
 typealias AlertModel = (alert: AlertType, action: Action)
 
 class BaseViewModel: BaseViewModelProtocol {
-    @Inject var appService: AppManagerService
+    @Inject var apiService: ApiManagerService
+    var localDataBase = LocalDataBaseManagerService.shared
+    
     @ObservedObject var route: Coordinator<AppRoutePath>
     @Published var state: ViewState = .loaded()
     var cancellables = Set<AnyCancellable>()
@@ -37,14 +39,15 @@ class BaseViewModel: BaseViewModelProtocol {
 }
 
 extension BaseViewModel {
+    // llamada global a la API
     func execute<T, E>(request: AppRequest<T>, completion: @escaping (E) -> Void) where T : RequestParam, E: Decodable {
-        appService.execute(request: request)
+        apiService.execute(request: request)
             .sink { [weak self] completion in
                 switch completion {
                 case .finished: break
                 case .failure(let error):
                     guard let customError = error as? CustomError else { return }
-                    self?.proccessError(error: customError)
+                    self?.showError(error: customError)
                 }
             } receiveValue: { data in
                 completion(data)
@@ -52,7 +55,7 @@ extension BaseViewModel {
             .store(in: &cancellables)
     }
     
-    private func proccessError(error: CustomError) {
+    func showError(error: CustomError) {
         self.state = .error(error, {
             self.onErrorAction()
         })

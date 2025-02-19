@@ -18,6 +18,9 @@ struct HomeView: View {
         Background(state: viewModel.state) {
             catalogList
         }
+        .onAppear {
+            viewModel.handle(.getCatalogFromCache)
+        }
     }
     
     private var catalogList: some View {

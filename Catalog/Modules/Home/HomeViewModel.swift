@@ -8,7 +8,6 @@
 import Foundation
 
 final class HomeViewModel: BaseViewModel {
-    @Inject private var localService: AppLocalManagerService
     @Published var gameList: [LocalGame] = []
     @Published var searchText = ""
     var filteredGames: [LocalGame] {
@@ -21,15 +20,23 @@ final class HomeViewModel: BaseViewModel {
     
     enum Action {
         case getCatalogAndSave
+        case getCatalogFromCache
         case onSelectGame(LocalGame)
     }
     
+    @MainActor
     func handle(_ action: Action) {
         switch action {
         case .getCatalogAndSave:
             getCatalogAndSaveAction()
         case .onSelectGame(let game):
             navigateToGameDetail(game: game)
+        case .getCatalogFromCache:
+            if gameList.count > 0 {
+                Task {
+                    await getCatalogFromCacheAction()
+                }
+            }
         }
     }
     
@@ -50,24 +57,23 @@ extension HomeViewModel {
         execute(request: request) { [weak self] gameList in
             guard let self = self else { return }
             Task {
-                do {
-                    try await storeGameReturned(games: gameList)
-                    self.gameList = try await self.localService.retrieveAllGames().sorted(by: { $0.title < $1.title })
-                } catch {
-                    self.gameList = []
-                }
+                await self.storeAllGamesAction(gameList)
+                await self.getCatalogFromCacheAction()
                 self.state = .loaded()
             }
         }
-        
-        func storeGameReturned(games: [Game]) async throws {
-            do {
-                try await localService.storeAllGames(games: games)
-            }
-            catch {
-                throw error
-            }
-        }
+    }
+    
+    private func storeAllGamesAction(_ gameList: [Game]) async {
+        do {
+            try localDataBase.addItems(gameList.map({ $0.toLocalGame() }))
+        } catch { }
+    }
+    
+    private func getCatalogFromCacheAction() async {
+        do {
+            self.gameList = try localDataBase.fetchAll(ofType: LocalGame.self).sorted { $0.title < $1.title }
+        } catch {}
     }
     
     private func navigateToGameDetail(game: LocalGame) {

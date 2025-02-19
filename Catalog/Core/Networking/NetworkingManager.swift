@@ -11,9 +11,9 @@ import Foundation
 protocol NetworkingManagerService {
     func execute<E: RequestParam, T: Decodable>(parameters: AppRequest<E>) -> AnyPublisher<T, Error>
 }
-
+// Llamada global a la API
 final class NetworkingManager: NSObject, URLSessionDelegate, NetworkingManagerService {
-    private var session: URLSession
+    private let session: URLSession
     
     override init() {
         session = URLSession(configuration: .default)

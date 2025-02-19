@@ -7,8 +7,8 @@
 
 import Foundation
 
-class AppPreview {
-    static let shared = AppPreview()
+final class AppPreview {
+    @MainActor static let shared = AppPreview()
     
     let game: LocalGame = LocalGame(id: 123,
                           title: "Tarisland",
