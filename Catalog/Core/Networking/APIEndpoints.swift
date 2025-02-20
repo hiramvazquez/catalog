@@ -42,3 +42,13 @@ enum APIEndpoints {
         }
     }
 }
+
+extension APIEndpoints {
+    @MainActor
+    func mocked() -> Data? {
+        switch self {
+        case .gameList:
+            return Mocks.shared.gameListResponse
+        }
+    }
+}
