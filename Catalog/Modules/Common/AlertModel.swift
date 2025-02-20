@@ -19,7 +19,7 @@ enum AlertType: Equatable {
         switch self {
             case .removeGame:
             .init(
-                title: "¿Estás seguro?",
+                title: "Eliminar",
                 message: "¿Deseas eliminar el juego?"
             )
         }

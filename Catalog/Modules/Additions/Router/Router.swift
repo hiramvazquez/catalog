@@ -11,10 +11,6 @@ import SwiftUI
 typealias Hash = Hashable & Identifiable
 
 enum AppRoutePath: Hash {
-    static func == (lhs: AppRoutePath, rhs: AppRoutePath) -> Bool {
-        lhs.id == rhs.id
-    }
-    
     case splash
     case home
     case detailGame(LocalGame)
@@ -44,6 +40,10 @@ extension AppRoutePath {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(self)
+    }
+    
+    static func == (lhs: AppRoutePath, rhs: AppRoutePath) -> Bool {
+        lhs.id == rhs.id
     }
 }
 

@@ -22,12 +22,10 @@ struct AppAlertView: View {
                     }
                 }
                 .foregroundColor(.black)
-                HStack {
-                    Button(action: alert.1) {
-                        Text("Aceptar")
-                    }
-                    .buttonStyle(.borderedProminent)
+                Button(action: alert.1) {
+                    Text("Aceptar")
                 }
+                .buttonStyle(.borderedProminent)
             }
             .padding()
             .background(Color.white)
