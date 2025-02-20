@@ -10,7 +10,6 @@ import SwiftUI
 struct GameCellView: View {
     let game: LocalGame
     let onSelected: Action
-    @State var animateTitle: Bool = false
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -26,9 +25,6 @@ struct GameCellView: View {
         .onTapGesture {
             onSelected()
         }
-        .onAppear {
-            animateTitle = true
-        }
     }
     
     private var titleView: some View {
@@ -43,8 +39,6 @@ struct GameCellView: View {
             .background {
                 gradientView
             }
-            .opacity(animateTitle ? 1 : 0)
-            .animation(.easeOut(duration: 1).delay(1), value: animateTitle)
     }
     
     private var gradientView: some View {
