@@ -16,7 +16,7 @@ protocol BaseViewModelProtocol: ObservableObject {
 typealias AlertModel = (alert: AlertType, action: Action)
 
 class BaseViewModel: BaseViewModelProtocol {
-    @Inject var apiService: NetworkingManagerService
+    @Inject var appService: AppManagerService
     var localDataBase = LocalDataBaseManagerService.shared
     
     @ObservedObject var route: Coordinator<AppRoutePath>
@@ -41,15 +41,14 @@ extension BaseViewModel {
     // llamada global a la API
     func execute<T, E>(request: AppRequest<T>) async -> E? where T : RequestParam, E : Decodable, E : Sendable {
         do {
-            let result: E = try await apiService.execute(parameters: request)
+            let result: E = try await appService.execute(request: request)
             return result
         } catch let error as CustomError {
             showError(error: error)
-            return nil
         } catch {
             showError(error: .general)
-            return nil
         }
+        return nil
     }
     
     func showError(error: CustomError) {

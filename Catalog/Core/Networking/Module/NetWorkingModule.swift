@@ -11,6 +11,7 @@ struct NetWorkingModule: DependencyModule {
     func register() {
         Task { @MainActor in
             Dependency.register(NetworkingManager(), lifecycle: .singleton, as: NetworkingManagerService.self)
-        }        
+            Dependency.register(AppService(), lifecycle: .singleton, as: AppManagerService.self)
+        }
     }
 }
